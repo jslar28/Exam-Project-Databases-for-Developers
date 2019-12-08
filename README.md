@@ -2,6 +2,14 @@
 Exam Project for Databases for Developers, 2019.
 
 # Setup
+
+Setup config file:
+    Make a copy of ./backend/env.template
+    Rename the copy "env.js"
+    Store it in "./backend/env.js"
+        (This is the same location as the template file)
+    Change the values to match your local DB
+
 Change directory to ./backend
 Run: npm install
 Run: nodemon
@@ -37,5 +45,5 @@ Make sure you have MSSQL running.
         - Go to "Security"
         - Under "Server Authentication", click SQL Server and Windows Authentication
         - Hit OK
-    Note, you might have to change the "config" variable in ./backend/db.js to match a user on your system
+    Note, you might have to change the variables in ./backend/env.js to match a user on your system
 
