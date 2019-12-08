@@ -1,2 +1,41 @@
 # Exam-Project-Databases-for-Developers
 Exam Project for Databases for Developers, 2019.
+
+# Setup
+Change directory to ./backend
+Run: npm install
+Run: nodemon
+
+Change directory to ./frontend
+Run: npm install
+Run: npm start
+
+Optional:
+    If something is already running on port, do the following:
+        In CMD, run command: netstat -ano | findStr "3500"
+            (Replace 3500 with whatever port is used)
+            You will get the ID of the process running on the port
+        Then in CMD, run command: taskkill /pid {id} /f
+            (Replace {id} with the ID found in the previous step)
+
+Make sure you have MSSQL running.
+    Note, you might need to enable TCP/IP in SQL Sever Configuration Manager:
+        - Open SQL Sever 2017 Configuration Manager
+        - Click SQL Server Network Configuration
+        - Click Protocols for MSSQLSERVER
+        - Double click TCP/IP
+        - Click "IP Adresses" tab
+        - Scroll to bottom to "IPAll"
+        - Clear any values in "TCP Dynamic Ports" field (if any)
+        - Set value in "TCP Port" field to 1433
+        - Hit Apply + OK
+        - Right click on TCP/IP, and click "Enable"
+    Note, you might have to enable SQL Authentication for SQL Server
+        - Login to MS SQL
+        - Right click the server name (typically the computer name)
+        - Click "Properties"
+        - Go to "Security"
+        - Under "Server Authentication", click SQL Server and Windows Authentication
+        - Hit OK
+    Note, you might have to change the "config" variable in ./backend/db.js to match a user on your system
+
