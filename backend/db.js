@@ -7,13 +7,49 @@ const config = {
     database: env.db
 }
 
+function getAllZipCodes(req, res) {
+    sql.connect(config, (err) => {
+        if (err) {
+            console.log(err)
+        }
+        let request = new sql.Request()
+        let query = `SELECT * FROM TZipCode;`
+        request.query(query, (err, recordset) => {
+            if(err) {
+                console.log(err)
+            } else {
+                console.log(recordset.recordset)
+            }
+            res.send(recordset.recordset)
+        })
+    })
+}
 
+function getCityNameByZipCode(req, res) {
+    console.log("HERE")
+    sql.connect(config, (err) => {
+        if (err) {
+            console.log(err)
+        }
+        let request = new sql.Request()
+        console.log("HEY")
+        console.log(req.params.id)
+        let query = `SELECT * FROM TZipCode WHERE cZipCode = ${req.params.id};`
+        request.query(query, (err, recordset) => {
+            if(err) {
+                console.log(err)
+            } else {
+                console.log(recordset.recordset)
+                res.send(recordset.recordset)
+            }
+        })
+    })
+}
 
 function postGreeting(req, res) {
     sql.connect(config, (err) => {
         if (err) {
             console.log(err)
-            console.log("dummy change")
         }
         let request = new sql.Request()
         let query = `INSERT INTO TGreetings (cGreeting) VALUES ('${req.body.greeting}');`
@@ -25,7 +61,9 @@ function postGreeting(req, res) {
 }
 
 fncs = {
-    postGreeting
+    postGreeting,
+    getAllZipCodes,
+    getCityNameByZipCode
 }
 
 module.exports = fncs

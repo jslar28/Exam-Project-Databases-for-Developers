@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from "axios";
+import { getAllZipCodes, getCityNameByZipCode } from "../services/postService";
 
 class MainPage extends React.Component {
 
@@ -7,7 +8,9 @@ class MainPage extends React.Component {
         super(props)
         this.state = {
             products: [{ id: 0 }, { id: 1 }, { id: 2 }],
-            greeting: ""
+            greeting: "",
+            zipCodes: [],
+            cityName: null
         }
     }
 
@@ -22,9 +25,9 @@ class MainPage extends React.Component {
         }).then(response => {
             console.log(response.data)
         })
-        .catch(error => {
-            console.log("Error: " + error);
-        });
+            .catch(error => {
+                console.log("Error: " + error);
+            });
     }
 
     insertGreeting = () => {
@@ -37,9 +40,9 @@ class MainPage extends React.Component {
         }).then(response => {
             console.log(response.statusText)
         })
-        .catch(error => {
-            console.log("Error: " + error);
-        });
+            .catch(error => {
+                console.log("Error: " + error);
+            });
     }
 
     changeGreeting = (e) => {
@@ -48,6 +51,38 @@ class MainPage extends React.Component {
             greeting
         })
     }
+
+    onZipCodeChange = (e) => {
+        let code = e.target.value
+        if (code.length === 4) {
+            getCityNameByZipCode(code, (success, response) => {
+                if (success) {
+                    console.log(response.data)
+                    this.setState({
+                        cityName: response.data[0].cCityName
+                    })
+                } else {
+                    console.log("No such code")
+                }
+            })
+        } else {
+            this.setState({
+                cityName: null
+            })
+        }
+    }
+
+    getZipCodes = () => {
+        getAllZipCodes((success, response) => {
+            if (success) {
+                this.setState({
+                    zipCodes: response.data
+                })
+            }
+        })
+    }
+
+
 
     render() {
         return (
@@ -68,6 +103,17 @@ class MainPage extends React.Component {
                 </div>
                 <div className="container mainContainer">
                     <form className="form-inline my-2 my-lg-0">
+                        <input className="form-control mr-sm-2" type="text" placeholder="ZipCode" aria-label="Search" onChange={(e) => this.onZipCodeChange(e)} />
+                        <label className="my-2 my-sm-0">
+                            {
+                                this.state.cityName ?
+                                    this.state.cityName
+                                    :
+                                    "No such code"
+                            }
+                        </label>
+                    </form>
+                    <form className="form-inline my-2 my-lg-0">
                         <input className="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" onChange={(e) => this.changeGreeting(e)} />
                         <button className="btn btn-outline-success my-2 my-sm-0" type="button">Search</button>
                     </form>
@@ -85,7 +131,7 @@ class MainPage extends React.Component {
                                 </li>
                             ))
                         }
-                        <button className="btn btn-outline-success my-2 my-sm-0" type="button" onClick={this.insertGreeting}>Java</button>
+                        <button className="btn btn-outline-success my-2 my-sm-0" type="button" onClick={this.getZipCodes}>Java</button>
                     </ul>
                 </div>
             </div>
