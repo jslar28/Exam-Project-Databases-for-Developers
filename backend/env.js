@@ -1,6 +1,6 @@
 const user = 'sa'
 const password = 'test123'
-const db = 'WebShopDBs'
+const db = 'WebShopDB'
 
 module.exports = {
     user,
