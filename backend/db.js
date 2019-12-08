@@ -13,6 +13,7 @@ function postGreeting(req, res) {
     sql.connect(config, (err) => {
         if (err) {
             console.log(err)
+            console.log("dummy change")
         }
         let request = new sql.Request()
         let query = `INSERT INTO TGreetings (cGreeting) VALUES ('${req.body.greeting}');`
