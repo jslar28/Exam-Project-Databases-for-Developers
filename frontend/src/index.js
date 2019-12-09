@@ -6,12 +6,16 @@ import * as serviceWorker from './serviceWorker';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 import MainPage from './components/MainPage';
+import AdminPage from './components/AdminPage';
+import LoginPage from './components/LoginPage';
 
 const Root = () => {
   return (
     <div className="container">
       <Switch>
-        <Route exact path="/" component={MainPage} />
+        <Route exact path="/main" component={MainPage} />
+        <Route exact path="/admin" component={AdminPage} />
+        <Route exact path="/" component={LoginPage} />
       </Switch>
     </div>
   );

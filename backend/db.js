@@ -7,83 +7,51 @@ const config = {
     database: env.db
 }
 
-function getAllZipCodes(req, res) {
+function getUserByEmail(req, res) {
     sql.connect(config, (err) => {
         if (err) {
             console.log(err)
         }
         let request = new sql.Request()
-        let query = `SELECT * FROM TZipCode;`
-        request.query(query, (err, recordset) => {
+        let query = `SELECT * FROM TUser WHERE cEmail = '${req.body.email}';`
+        console.log(query)
+        request.query(query, (err, response) => {
             if (err) {
-                console.log(err)
+                console.log("Got error")
+                console.log(err.message)
+                res.send(err)
             } else {
-                console.log(recordset.recordset)
-            }
-            res.send(recordset.recordset)
-        })
-    })
-}
-
-function getCityNameByZipCode(req, res) {
-    console.log("HERE")
-    sql.connect(config, (err) => {
-        if (err) {
-            console.log(err)
-        }
-        let request = new sql.Request()
-        console.log("HEY")
-        console.log(req.params.id)
-        let query = `SELECT * FROM TZipCode WHERE cZipCode = ${req.params.id};`
-        request.query(query, (err, recordset) => {
-            if (err) {
-                console.log(err)
-            } else {
-                console.log(recordset.recordset)
-                res.send(recordset.recordset)
+                //console.log("Record set:")
+                //console.log(response.recordset)
+                res.send(response.recordset)
             }
         })
     })
 }
 
 function postProductBySearch(req, res) {
-    const query = `SELECT * FROM TZipCode 
-        WHERE cCityName LIKE '%${req.body.name}%' 
-        AND cZipCode LIKE '%${req.body.description}%';`
+    const query = `SELECT * FROM TProduct 
+        WHERE cName LIKE '%${req.body.name}%' 
+        AND cDescription LIKE '%${req.body.description}%';`
     sql.connect(config, (err) => {
         if (err) {
             console.log(err)
         }
         let request = new sql.Request()
-        request.query(query, (err, recordset) => {
+        request.query(query, (err, response) => {
             if (err) {
                 console.log(err)
             } else {
-                console.log(recordset.recordset)
-                res.send(recordset.recordset)
+                //console.log(response.recordset)
+                res.send(response.recordset)
             }
         })
     })
 }
 
-function postGreeting(req, res) {
-    sql.connect(config, (err) => {
-        if (err) {
-            console.log(err)
-        }
-        let request = new sql.Request()
-        let query = `INSERT INTO TGreetings (cGreeting) VALUES ('${req.body.greeting}');`
-        request.query(query, (err, recordset) => {
-            if (err) console.log(err)
-            res.send(recordset.recordset)
-        })
-    })
-}
 
 fncs = {
-    postGreeting,
-    getAllZipCodes,
-    getCityNameByZipCode,
+    getUserByEmail,
     postProductBySearch
 }
 

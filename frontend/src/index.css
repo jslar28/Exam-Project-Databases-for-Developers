@@ -35,3 +35,15 @@ code {
   margin: 0.5em 0em;
   color: darkslategray;
 }
+
+.fullWidth {
+  width: 100%;
+}
+
+.productName {
+  font-weight: bold;
+}
+
+.descriptionWrap {
+  overflow-wrap: break-word;
+}

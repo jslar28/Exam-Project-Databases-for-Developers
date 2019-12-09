@@ -5,22 +5,20 @@ const app = express()
 const port = 3500
 const db = require('./db')
 
-
 app.use(cors())
 app.use(bodyParser.json())
 
-app.get('/zipCodes', (req, res) => {
-    db.getAllZipCodes(req, res)
-})
+// GET REQUESTS
 
-app.get('/zipCode/:id', (req, res) => {
-    db.getCityNameByZipCode(req, res)
-})
+// POST REQUESTS
 
 app.post('/productSearch/', (req, res) => {
     db.postProductBySearch(req, res)
 })
 
+app.post('/login/', (req, res) => {
+    db.getUserByEmail(req, res)
+})
 
 app.listen(port, (err) => {
     if (err) {

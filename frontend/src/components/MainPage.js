@@ -1,15 +1,13 @@
 import React from 'react';
-import axios from "axios";
-import { getAllZipCodes, getCityNameByZipCode } from "../services/getService";
 import { postProductBySearch } from "../services/postService";
+import { getUser } from "../services/session"
 
 class MainPage extends React.Component {
 
     constructor(props) {
         super(props)
         this.state = {
-            products: [{ id: 0 }, { id: 1 }, { id: 2 }],
-            greeting: "",
+            products: [],
             zipCodes: [],
             cityName: null,
             nameSearch: "",
@@ -17,74 +15,16 @@ class MainPage extends React.Component {
         }
     }
 
-    pingNode = () => {
-        axios({
-            method: 'post',
-            url: 'http://localhost:3500',
-            data: {
-                h: 'heh',
-                b: 'bleh'
-            }
-        }).then(response => {
-            console.log(response.data)
-        })
-            .catch(error => {
-                console.log("Error: " + error);
-            });
+    componentDidMount() {
+        let x = getUser()
+        console.log(x)
     }
 
-    insertGreeting = () => {
-        axios({
-            method: 'post',
-            url: 'http://localhost:3500/greeting',
-            data: {
-                greeting: this.state.greeting
-            }
-        }).then(response => {
-            console.log(response.statusText)
-        })
-            .catch(error => {
-                console.log("Error: " + error);
-            });
-    }
-
-    changeGreeting = (e) => {
-        let greeting = e.target.value
+    onInputChange = (e) => {
+        let attribute = e.target.id
         this.setState({
-            greeting
-        })
-    }
-
-    onZipCodeChange = (e) => {
-        let code = e.target.value
-        if (code.length === 4) {
-            getCityNameByZipCode(code, (success, response) => {
-                if (success) {
-                    if (response.data.length > 0) {
-                        console.log(response.data)
-                        this.setState({
-                            cityName: response.data[0].cCityName
-                        })
-                    }
-                } else {
-                    console.log("No such code")
-                }
-            })
-        } else {
-            this.setState({
-                cityName: null
-            })
-        }
-    }
-
-    getZipCodes = () => {
-        getAllZipCodes((success, response) => {
-            if (success) {
-                this.setState({
-                    zipCodes: response.data
-                })
-            }
-        })
+            [attribute]: e.target.value
+        }, () => console.log(this.state))
     }
 
     onNameSearchChange = (e) => {
@@ -148,19 +88,8 @@ class MainPage extends React.Component {
                 </div>
                 <div className="container mainContainer">
                     <form className="form-inline my-2 my-lg-0">
-                        <input className="form-control mr-sm-2" type="text" placeholder="ZipCode" aria-label="Search" onChange={(e) => this.onZipCodeChange(e)} />
-                        <label className="my-2 my-sm-0">
-                            {
-                                this.state.cityName ?
-                                    this.state.cityName
-                                    :
-                                    "No such code"
-                            }
-                        </label>
-                    </form>
-                    <form className="form-inline my-2 my-lg-0">
-                        <input className="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Name" onChange={(e) => this.onNameSearchChange(e)} />
-                        <input className="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Description" onChange={(e) => this.onDescriptionSearchChange(e)} />
+                        <input className="form-control mr-sm-2" type="text" placeholder="Name" id="nameSearch" onChange={(e) => this.onInputChange(e)} />
+                        <input className="form-control mr-sm-2" type="text" placeholder="Description" id="descriptionSearch" onChange={(e) => this.onInputChange(e)} />
                         <button className="btn btn-outline-success my-2 my-sm-0" type="button" onClick={this.onSearchProduct}>Search</button>
                     </form>
                     <ul id="unList" className="list-unstyled">
@@ -170,16 +99,42 @@ class MainPage extends React.Component {
                                     <div className="container">
                                         <div className="row">
                                             <div className="col">
-                                                <p className="productParagraph" id="textField">{product.cCityName}</p>
-                                                <p className="productParagraph" id="textField">{product.cZipCode}</p>
+                                                <p className="productParagraph productName" id="textField">{product.cName}</p>
+                                                <p className="productParagraph descriptionWrap" id="textField">{product.cDescription}</p>
+                                                <p className="productParagraph descriptionWrap" id="textField">DKK {product.nUnitPrice}</p>
+                                                <p className="productParagraph descriptionWrap" id="textField">Stock: {product.nStock}</p>
+                                                <p className="productParagraph descriptionWrap" id="textField">Rating: {product.nAverageRating}</p>
+                                                <button className="btn btn-outline-success my-2 my-sm-0" type="button">TODO: Add to cart</button>
+                                                <p></p>
                                             </div>
                                         </div>
                                     </div>
                                 </li>
                             ))
                         }
-                        <button className="btn btn-outline-success my-2 my-sm-0" type="button" onClick={this.getZipCodes}>Java</button>
+                        <button className="btn btn-outline-success my-2 my-sm-0" type="button" onClick={this.getZipCodes}>PH</button>
                     </ul>
+                </div>
+                <div>
+                    <p></p>
+                </div>
+                <div className="container mainContainer">
+                    <div className="container">
+                        <label>User</label>
+                        <div className="row">
+                        <div className="col">
+                                <p className="productParagraph" id="textField">{getUser().cFirstName}</p>
+                                <p className="productParagraph" id="textField">{getUser().cSurname}</p>
+                                <p className="productParagraph" id="textField">{getUser().cEmail}</p>
+                            </div>
+                            <div className="col">
+                                <p className="productParagraph" id="textField">Address: {getUser().cAdress}</p>
+                                <p className="productParagraph" id="textField">{getUser().cZipCode}</p>
+                                <p className="productParagraph" id="textField">City ID: {getUser().nCityID}</p>
+                                <p className="productParagraph" id="textField">Total Spent: {getUser().nTotalSpent}</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         )
