@@ -17,6 +17,10 @@ app.get('/zipCode/:id', (req, res) => {
     db.getCityNameByZipCode(req, res)
 })
 
+app.post('/productSearch/', (req, res) => {
+    db.postProductBySearch(req, res)
+})
+
 
 app.listen(port, (err) => {
     if (err) {

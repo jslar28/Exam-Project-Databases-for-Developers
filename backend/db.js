@@ -15,7 +15,7 @@ function getAllZipCodes(req, res) {
         let request = new sql.Request()
         let query = `SELECT * FROM TZipCode;`
         request.query(query, (err, recordset) => {
-            if(err) {
+            if (err) {
                 console.log(err)
             } else {
                 console.log(recordset.recordset)
@@ -36,7 +36,27 @@ function getCityNameByZipCode(req, res) {
         console.log(req.params.id)
         let query = `SELECT * FROM TZipCode WHERE cZipCode = ${req.params.id};`
         request.query(query, (err, recordset) => {
-            if(err) {
+            if (err) {
+                console.log(err)
+            } else {
+                console.log(recordset.recordset)
+                res.send(recordset.recordset)
+            }
+        })
+    })
+}
+
+function postProductBySearch(req, res) {
+    const query = `SELECT * FROM TZipCode 
+        WHERE cCityName LIKE '%${req.body.name}%' 
+        AND cZipCode LIKE '%${req.body.description}%';`
+    sql.connect(config, (err) => {
+        if (err) {
+            console.log(err)
+        }
+        let request = new sql.Request()
+        request.query(query, (err, recordset) => {
+            if (err) {
                 console.log(err)
             } else {
                 console.log(recordset.recordset)
@@ -54,7 +74,7 @@ function postGreeting(req, res) {
         let request = new sql.Request()
         let query = `INSERT INTO TGreetings (cGreeting) VALUES ('${req.body.greeting}');`
         request.query(query, (err, recordset) => {
-            if(err) console.log(err)
+            if (err) console.log(err)
             res.send(recordset.recordset)
         })
     })
@@ -63,7 +83,8 @@ function postGreeting(req, res) {
 fncs = {
     postGreeting,
     getAllZipCodes,
-    getCityNameByZipCode
+    getCityNameByZipCode,
+    postProductBySearch
 }
 
 module.exports = fncs
