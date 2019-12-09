@@ -45,5 +45,7 @@ Make sure you have MSSQL running.
         - Go to "Security"
         - Under "Server Authentication", click SQL Server and Windows Authentication
         - Hit OK
+        - Go to "Security" -> "Logins" -> Right click 'sa' -> Click "Properties" -> Go to "Status" -> Under "Login", click "Enabled"
+        - Right click the server name again, and click Restart
     Note, you might have to change the variables in ./backend/env.js to match a user on your system
 
