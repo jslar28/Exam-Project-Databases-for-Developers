@@ -1,25 +1,16 @@
 import axios from "axios";
 const BASE_URL = 'http://localhost:3500'
 
-export { getAllZipCodes, getCityNameByZipCode };
+export { postProductBySearch };
 
-function getAllZipCodes(callback) {
+function postProductBySearch(name, description, callback) {
     axios({
-        method: 'get',
-        url: `${BASE_URL}/zipCodes`,
-    }).then(response => {
-        return callback(true, response);
-    })
-    .catch(error => {
-        console.log("Error: " + error);
-        return callback(false, error);
-    });
-}
-
-function getCityNameByZipCode(code, callback) {
-    axios({
-        method: 'get',
-        url: `${BASE_URL}/zipCode/` + code,
+        method: 'post',
+        url: `${BASE_URL}/productSearch/`,
+        data: {
+            name,
+            description
+        }
     }).then(response => {
         return callback(true, response);
     })

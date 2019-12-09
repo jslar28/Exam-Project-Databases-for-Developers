@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from "axios";
-import { getAllZipCodes, getCityNameByZipCode } from "../services/postService";
+import { getAllZipCodes, getCityNameByZipCode } from "../services/getService";
+import { postProductBySearch } from "../services/postService";
 
 class MainPage extends React.Component {
 
@@ -10,7 +11,9 @@ class MainPage extends React.Component {
             products: [{ id: 0 }, { id: 1 }, { id: 2 }],
             greeting: "",
             zipCodes: [],
-            cityName: null
+            cityName: null,
+            nameSearch: "",
+            descriptionSearch: ""
         }
     }
 
@@ -57,10 +60,12 @@ class MainPage extends React.Component {
         if (code.length === 4) {
             getCityNameByZipCode(code, (success, response) => {
                 if (success) {
-                    console.log(response.data)
-                    this.setState({
-                        cityName: response.data[0].cCityName
-                    })
+                    if (response.data.length > 0) {
+                        console.log(response.data)
+                        this.setState({
+                            cityName: response.data[0].cCityName
+                        })
+                    }
                 } else {
                     console.log("No such code")
                 }
@@ -82,7 +87,47 @@ class MainPage extends React.Component {
         })
     }
 
+    onNameSearchChange = (e) => {
+        let search = e.target.value
+        if (search.length > 0) {
+            this.setState({
+                nameSearch: search
+            })
+        } else {
+            this.setState({
+                nameSearch: ""
+            })
+        }
+    }
 
+    onDescriptionSearchChange = (e) => {
+        let search = e.target.value
+        if (search.length > 0) {
+            this.setState({
+                descriptionSearch: search
+            })
+        } else {
+            this.setState({
+                descriptionSearch: ""
+            })
+        }
+    }
+
+    onSearchProduct = () => {
+        postProductBySearch(this.state.nameSearch, this.state.descriptionSearch, (success, response) => {
+            if (success) {
+                console.log(response.data)
+                this.setState({
+                    products: response.data
+                })
+            } else {
+                console.log("No product found")
+                this.setState({
+                    products: []
+                })
+            }
+        })
+    }
 
     render() {
         return (
@@ -114,8 +159,9 @@ class MainPage extends React.Component {
                         </label>
                     </form>
                     <form className="form-inline my-2 my-lg-0">
-                        <input className="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" onChange={(e) => this.changeGreeting(e)} />
-                        <button className="btn btn-outline-success my-2 my-sm-0" type="button">Search</button>
+                        <input className="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Name" onChange={(e) => this.onNameSearchChange(e)} />
+                        <input className="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Description" onChange={(e) => this.onDescriptionSearchChange(e)} />
+                        <button className="btn btn-outline-success my-2 my-sm-0" type="button" onClick={this.onSearchProduct}>Search</button>
                     </form>
                     <ul id="unList" className="list-unstyled">
                         {
@@ -124,7 +170,8 @@ class MainPage extends React.Component {
                                     <div className="container">
                                         <div className="row">
                                             <div className="col">
-                                                <p className="productParagraph" id="textField">{product.id}</p>
+                                                <p className="productParagraph" id="textField">{product.cCityName}</p>
+                                                <p className="productParagraph" id="textField">{product.cZipCode}</p>
                                             </div>
                                         </div>
                                     </div>
