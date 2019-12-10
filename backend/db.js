@@ -17,7 +17,7 @@ function getUserByEmail(req, res) {
         console.log(query)
         request.query(query, (err, response) => {
             if (err) {
-                console.log("Got error")
+                console.log("Query error:")
                 console.log(err.message)
                 res.send(err)
             } else {
@@ -30,6 +30,7 @@ function getUserByEmail(req, res) {
 }
 
 function postProductBySearch(req, res) {
+    // To SQL inject, enter Cof' OR 1 = 1 --
     const query = `SELECT * FROM TProduct 
         WHERE cName LIKE '%${req.body.name}%' 
         AND cDescription LIKE '%${req.body.description}%';`
@@ -40,7 +41,9 @@ function postProductBySearch(req, res) {
         let request = new sql.Request()
         request.query(query, (err, response) => {
             if (err) {
-                console.log(err)
+                console.log("Query error:")
+                console.log(err.message)
+                res.send(err)
             } else {
                 //console.log(response.recordset)
                 res.send(response.recordset)

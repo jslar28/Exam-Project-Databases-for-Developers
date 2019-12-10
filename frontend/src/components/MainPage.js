@@ -55,7 +55,7 @@ class MainPage extends React.Component {
 
     onSearchProduct = () => {
         postProductBySearch(this.state.nameSearch, this.state.descriptionSearch, (success, response) => {
-            if (success) {
+            if (success && response.data.length > 0) {
                 console.log(response.data)
                 this.setState({
                     products: response.data
@@ -122,7 +122,7 @@ class MainPage extends React.Component {
                     <div className="container">
                         <label>User</label>
                         <div className="row">
-                        <div className="col">
+                            <div className="col">
                                 <p className="productParagraph" id="textField">{getUser().cFirstName}</p>
                                 <p className="productParagraph" id="textField">{getUser().cSurname}</p>
                                 <p className="productParagraph" id="textField">{getUser().cEmail}</p>
