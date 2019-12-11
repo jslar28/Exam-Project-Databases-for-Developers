@@ -47,3 +47,11 @@ code {
 .descriptionWrap {
   overflow-wrap: break-word;
 }
+
+.green {
+  color: green;
+}
+
+.red {
+  color: red;
+}

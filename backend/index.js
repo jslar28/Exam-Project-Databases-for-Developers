@@ -10,14 +10,19 @@ app.use(bodyParser.json())
 
 // GET REQUESTS
 
+app.get('/creditCards/:userID', (req, res) => {
+    db.getCreditCardsByUser(req, res)
+})
+
 // POST REQUESTS
 
 app.post('/productSearch/', (req, res) => {
-    db.postProductBySearch(req, res)
+    db.postProductBySearchSP(req, res)
 })
 
 app.post('/login/', (req, res) => {
-    db.getUserByEmail(req, res)
+    db.getUserByEmailPrepared(req, res)
+    //db.getUserByEmail(req, res)
 })
 
 app.listen(port, (err) => {
