@@ -32,4 +32,20 @@ function postUserByEmail(email, callback) {
     });
 }
 
-export { postProductBySearch, postUserByEmail };
+function postRating(rating, callback) {
+    axios({
+        method: 'post',
+        url: `${BASE_URL}/rating/`,
+        data: {
+            rating
+        }
+    }).then(response => {
+        return callback(true, response);
+    })
+    .catch(error => {
+        return callback(false, error);
+    });
+}
+
+
+export { postProductBySearch, postUserByEmail, postRating };

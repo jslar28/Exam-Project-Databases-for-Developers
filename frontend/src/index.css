@@ -20,6 +20,10 @@ code {
   margin-bottom: 1em;
 }
 
+.topSpacer {
+  margin-top: 1em;
+}
+
 .mainContainer {
   padding: 2rem 2rem;
   color: black;

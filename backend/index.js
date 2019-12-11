@@ -17,12 +17,15 @@ app.get('/creditCards/:userID', (req, res) => {
 // POST REQUESTS
 
 app.post('/productSearch/', (req, res) => {
-    db.postProductBySearchSP(req, res)
+    db.postProductBySearch(req, res)
 })
 
 app.post('/login/', (req, res) => {
-    db.getUserByEmailPrepared(req, res)
-    //db.getUserByEmail(req, res)
+    db.getUserByEmail(req, res)
+})
+
+app.post('/rating', (req, res) => {
+    db.ratingTransaction(req, res)
 })
 
 app.listen(port, (err) => {
