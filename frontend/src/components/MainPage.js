@@ -151,6 +151,7 @@ class MainPage extends React.Component {
                 })
             } else {
                 console.log("No product found")
+                console.log(response)
                 this.setState({
                     products: []
                 })

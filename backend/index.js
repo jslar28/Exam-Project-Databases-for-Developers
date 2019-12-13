@@ -24,7 +24,7 @@ app.post('/login/', (req, res) => {
     db.getUserByEmail(req, res)
 })
 
-app.post('/rating', (req, res) => {
+app.post('/rating/', (req, res) => {
     db.ratingTransaction(req, res)
 })
 

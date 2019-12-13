@@ -24,7 +24,7 @@ class Product extends React.Component {
     }
 
     onRate = (nProductID, rating) => {
-        console.log(nProductID, rating)
+        //console.log(nProductID, rating)
         this.setState({
             ratingSelected: true,
             score: rating
@@ -47,6 +47,7 @@ class Product extends React.Component {
         }
         postRating(rating, (success, response) => {
             if (success) {
+                console.log("Success")
                 console.log(response.data)
             } else {
                 console.log("Something went wrong")

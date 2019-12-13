@@ -1,5 +1,5 @@
 let user = {
-    nUserID: 101,
+    nUserID: 4,
     cFirstName: 'John',
     cSurname: 'Doe',
     cAddress: null,

@@ -69,8 +69,8 @@ async function postProductBySearch(req, res) {
         //const request = new sql.Request(pool)
         const ps = new sql.PreparedStatement(pool)
         ps.input('name', sql.VarChar)
-        ps.input('description', sql.VarChar)
-        ps.prepare(`EXEC Search_withDefaultparameters @name, @description`, err => {
+        ps.input('description', sql.TEXT)
+        ps.prepare(`EXEC SearchProduct @name, @description`, err => {
             if (err) console.log('SQL error', err)
 
             ps.execute(
@@ -90,45 +90,6 @@ async function postProductBySearch(req, res) {
                         if (err) console.log('SQL error', err)
                     })
                 })
-        })
-    } catch (err) {
-        console.log('SQL error', err)
-    }
-}
-
-async function asyncRatingTransaction(req, res) {
-    const pool = await poolConnect
-    try {
-        const transaction = new sql.Transaction(pool)
-        transaction.begin(err => {
-            if (err) console.log('SQL error', err)
-
-            let rolledBack = false
-            transaction.on('rollback', aborted => {
-                // emited with aborted === true
-                rolledBack = true
-            })
-            const request = new sql.Request(transaction)
-            request.query(`insert into mytable (mycolumn) values (12345)`, (err, result) => {
-
-                // If we encounter an error, roll back
-                if (err) {
-                    // If we haven't rolled back, do it
-                    if (!rolledBack) {
-                        transaction.rollback(err => {
-                            if (err) console.log('Rollback SQL error', err)
-                        })
-                    }
-                } else {
-                    transaction.commit(err => {
-                        if (err) {
-                            console.log('SQL error', err)
-                        } else {
-                            res.send(response)
-                        }
-                    })
-                }
-            })
         })
     } catch (err) {
         console.log('SQL error', err)
@@ -178,8 +139,91 @@ async function buyTransation(req, res) {
     }
 }
 
-
 async function ratingTransaction(req, res) {
+    const pool = await poolConnect
+    try {
+        const ps = new sql.PreparedStatement(pool)
+        ps.input('userID', sql.Int)
+        ps.input('productID', sql.Int)
+        ps.input('score', sql.Numeric)
+        ps.input('comment', sql.Text)
+        console.log(req.body)
+        ps.prepare(`EXECUTE RateProduct @userID, @productID, @score, @comment`, err => {
+            if (err) console.log('SQL error', err)
+
+            ps.execute({ 
+                    userID: req.body.rating.nUserID,
+                    productID: req.body.rating.nProductID,
+                    score: req.body.rating.nScore,
+                    comment: req.body.rating.cComment }, (err, response) => {
+                if (err) {
+                    console.log('SQL error', err)
+                } else {
+                    console.log(response)
+                    res.send(response.recordset)
+                }
+
+                // release the connection after queries are executed
+                ps.unprepare(err => {
+                    if (err) console.log('SQL error', err)
+                })
+            })
+        })
+    } catch (err) {
+        console.log('SQL error', err)
+    }
+}
+
+
+queries = {
+    getUserByEmail,
+    getCreditCardsByUser,
+    postProductBySearch,
+    ratingTransaction
+}
+
+module.exports = queries
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// OLD TESTING QUERIES
+
+function OLD_postProductBySearch(req, res) {
+    // To SQL inject, enter Cof' OR 1 = 1 --
+    const query = `SELECT * FROM TProduct 
+        WHERE cName LIKE '%${req.body.name}%' 
+        AND cDescription LIKE '%${req.body.description}%';`
+    sql.connect(config, (err) => {
+        if (err) {
+            console.log(err)
+        }
+        let request = new sql.Request()
+        request.query(query, (err, response) => {
+            if (err) {
+                console.log("Query error:")
+                console.log(err.message)
+                res.send(err)
+            } else {
+                //console.log(response.recordset)
+                res.send(response.recordset)
+            }
+        })
+    })
+}
+
+async function OLDratingTransaction(req, res) {
     const pool = await poolConnect
     try {
         var transaction = new sql.Transaction(pool);
@@ -274,34 +318,41 @@ async function ratingTransaction(req, res) {
     }
 }
 
-queries = {
-    getUserByEmail,
-    getCreditCardsByUser,
-    postProductBySearch,
-    ratingTransaction
-}
+async function OLDasyncRatingTransaction(req, res) {
+    const pool = await poolConnect
+    try {
+        const transaction = new sql.Transaction(pool)
+        transaction.begin(err => {
+            if (err) console.log('SQL error', err)
 
-module.exports = queries
+            let rolledBack = false
+            transaction.on('rollback', aborted => {
+                // emited with aborted === true
+                rolledBack = true
+            })
+            const request = new sql.Request(transaction)
+            request.query(`insert into mytable (mycolumn) values (12345)`, (err, result) => {
 
-function OLD_postProductBySearch(req, res) {
-    // To SQL inject, enter Cof' OR 1 = 1 --
-    const query = `SELECT * FROM TProduct 
-        WHERE cName LIKE '%${req.body.name}%' 
-        AND cDescription LIKE '%${req.body.description}%';`
-    sql.connect(config, (err) => {
-        if (err) {
-            console.log(err)
-        }
-        let request = new sql.Request()
-        request.query(query, (err, response) => {
-            if (err) {
-                console.log("Query error:")
-                console.log(err.message)
-                res.send(err)
-            } else {
-                //console.log(response.recordset)
-                res.send(response.recordset)
-            }
+                // If we encounter an error, roll back
+                if (err) {
+                    // If we haven't rolled back, do it
+                    if (!rolledBack) {
+                        transaction.rollback(err => {
+                            if (err) console.log('Rollback SQL error', err)
+                        })
+                    }
+                } else {
+                    transaction.commit(err => {
+                        if (err) {
+                            console.log('SQL error', err)
+                        } else {
+                            res.send(response)
+                        }
+                    })
+                }
+            })
         })
-    })
+    } catch (err) {
+        console.log('SQL error', err)
+    }
 }
