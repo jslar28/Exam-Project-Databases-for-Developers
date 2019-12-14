@@ -52,6 +52,8 @@ GO
 -- Stored procedure for searching products
     -- Checks against both name and description
     -- Note that the description is converted to VARCHAR, because TEXT doesn't work with string concatenation
+USE WebShopDB
+GO
 CREATE OR ALTER PROCEDURE SearchProduct 
 	(@ProductName VARCHAR(40), @ProductDescription TEXT)
 AS
@@ -59,5 +61,60 @@ BEGIN
 	SELECT * FROM TProduct
 		WHERE cName LIKE '%' + @ProductName + '%'
 		AND cDescription LIKE '%' + CONVERT(VARCHAR(MAX), @ProductDescription) + '%'
+END
+GO
+
+USE WebShopDB
+GO
+CREATE OR ALTER PROCEDURE CheckStock 
+	(@Quantity INT, @ProductID INT, @InStock BIT OUTPUT)
+AS
+DECLARE @CalculatedStock INT
+BEGIN
+	SELECT @CalculatedStock = (nStock - @Quantity) FROM TProduct
+		WHERE nProductID = @ProductID
+	IF (@CalculatedStock < 0)
+		SET @InStock = 0
+	ELSE
+		SET @InStock = 1
+END
+GO
+
+USE WebShopDB
+GO
+CREATE OR ALTER PROCEDURE CheckStockAndInsertInvoiceLine
+	(@Quantity INT, @ProductID INT, @InvoiceID INT, @UnitPrice MONEY)
+AS
+DECLARE @CalculatedStock INT
+DECLARE @CurrentStock INT
+BEGIN
+	SET @CurrentStock = (SELECT nStock FROM TProduct
+		WHERE nProductID = @ProductID)
+	SET @CalculatedStock = (@CurrentStock - @Quantity)
+	
+	IF (@CalculatedStock < 0)
+		RAISERROR ('Item not in stock', 16, 1);
+	ELSE
+		INSERT INTO TInvoiceLine (nInvoiceID, nProductID, nQuantity, nUnitPrice) 
+			VALUES (@invoiceID, @productID, @quantity, @unitPrice)
+		UPDATE TProduct
+			SET nStock = (nStock - @Quantity)
+			WHERE nProductID = @ProductID
+END
+GO
+
+USE WebShopDB
+GO
+CREATE OR ALTER PROCEDURE UpdateCreditCardAnUser
+	(@CreditCardID INT, @UserID INT, @TotalAmountSpent MONEY)
+AS
+BEGIN
+	UPDATE TCreditCard
+		SET nTotalAmountSpent = (nTotalAmountSpent + @TotalAmountSpent)
+		WHERE nCreditCardID = @CreditCardID
+
+	UPDATE TUser
+		SET nTotalSpent = (nTotalSpent + @TotalAmountSpent)
+		WHERE nUserID = @UserID
 END
 GO

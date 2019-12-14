@@ -1,7 +1,7 @@
 import React from 'react';
-import { postProductBySearch } from "../services/postService";
+import { postProductBySearch, postPurchase } from "../services/postService";
 import { getCreditCardsByUser } from "../services/getService";
-import { getUser } from "../services/session"
+import { getUser, getTax } from "../services/session"
 import Product from './Product';
 
 class MainPage extends React.Component {
@@ -39,19 +39,41 @@ class MainPage extends React.Component {
 
     onBuy = () => {
         console.log("BUY")
+        let totalAmount = 0;
+        for (let i = 0; i < this.state.cart.length; i++) {
+            const product = this.state.cart[i];
+            totalAmount += product.combinedPrice            
+        }
+        let purchase = {
+            tax: getTax(),
+            totalAmount,
+            creditCardID: this.state.selectedID,
+            userID: getUser().nUserID,
+            cart: this.state.cart
+        }
+        
+        postPurchase(purchase, (success, response) => {
+            if (success) {
+                console.log("Purcase went through!")
+                console.log(response)
+            } else {
+                console.log("Purchase didn't go through")
+                console.log(response)
+            }
+        })
+        
     }
 
     onRemoveCartItem = (nProductID) => {
         this.state.cart.forEach((product, index) => {
             if (product.nProductID === nProductID) {
-                let newCart = this.state.cart
+                let newCart = [...this.state.cart]
                 let currentQuantity = product.quantity
                 if (currentQuantity === 1) {
                     newCart.splice(index, 1)
                 } else {
-                    let unitPrice = product.price / currentQuantity
                     newCart[index].quantity -= 1
-                    newCart[index].price = unitPrice * product.quantity
+                    newCart[index].combinedPrice = product.unitPrice * product.quantity
                 }
                 this.setState({
                     cart: newCart
@@ -64,7 +86,8 @@ class MainPage extends React.Component {
         let trimmedProduct = {
             nProductID: selectedProduct.nProductID,
             name: selectedProduct.cName,
-            price: selectedProduct.nUnitPrice,
+            unitPrice: selectedProduct.nUnitPrice,
+            combinedPrice: selectedProduct.nUnitPrice,
             quantity: 1
         }
 
@@ -81,11 +104,9 @@ class MainPage extends React.Component {
 
             if (foundIndex != null) {
                 let product = this.state.cart[foundIndex]
-                let currentQuantity = product.quantity
-                let unitPrice = product.price / currentQuantity
-                let newCart = this.state.cart
+                let newCart = [...this.state.cart]
                 newCart[foundIndex].quantity += 1
-                newCart[foundIndex].price = unitPrice * product.quantity
+                newCart[foundIndex].combinedPrice = product.unitPrice * product.quantity
                 this.setState({
                     cart: newCart
                 })
@@ -203,7 +224,7 @@ class MainPage extends React.Component {
                                                                         <div className="row">
                                                                             <div className="col">
                                                                                 <p className="productParagraph productName" id="textField">{product.name}</p>
-                                                                                <p className="productParagraph descriptionWrap" id="textField">DKK {product.price}</p>
+                                                                                <p className="productParagraph descriptionWrap" id="textField">DKK {product.combinedPrice} ({product.unitPrice}/piece)</p>
                                                                                 <p className="productParagraph descriptionWrap" id="textField">Quantity: {product.quantity}</p>
                                                                                 <button className="btn btn-outline-success my-2 my-sm-0" type="button" onClick={() => this.onAddToCart(product)}>+</button>
                                                                                 <button className="btn btn-outline-success my-2 my-sm-0" type="button" onClick={() => this.onRemoveCartItem(product.nProductID)}>-</button>

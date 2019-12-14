@@ -47,5 +47,20 @@ function postRating(rating, callback) {
     });
 }
 
+function postPurchase(purchase, callback) {
+    axios({
+        method: 'post',
+        url: `${BASE_URL}/purchase/`,
+        data: {
+            purchase
+        }
+    }).then(response => {
+        return callback(true, response);
+    })
+    .catch(error => {
+        return callback(false, error);
+    });
+}
 
-export { postProductBySearch, postUserByEmail, postRating };
+
+export { postProductBySearch, postUserByEmail, postRating, postPurchase };

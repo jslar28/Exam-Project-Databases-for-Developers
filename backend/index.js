@@ -28,6 +28,10 @@ app.post('/rating/', (req, res) => {
     db.ratingTransaction(req, res)
 })
 
+app.post('/purchase/', (req, res) => {
+    db.buyTransaction(req, res)
+})
+
 app.listen(port, (err) => {
     if (err) {
         console.log("Error in express:")
