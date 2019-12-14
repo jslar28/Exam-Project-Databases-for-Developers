@@ -439,7 +439,73 @@ END
 GO
 -- Example run: EXEC RateProduct 9, 9, 3, 'Decent'
 
+USE WebShopDB
+GO
+CREATE OR ALTER PROCEDURE BuyProduct 
+	(@Tax NUMERIC(4,2), @TotalAmount MONEY, @CreditCardID INT, @UserID INT, @JSON_PRODUCTS NVARCHAR(MAX))
+AS
+BEGIN
+	BEGIN TRY
+		BEGIN TRANSACTION
+			SET NOCOUNT ON
+			DECLARE @InvoiceID INT
 
+			INSERT INTO TInvoice(nTax, nTotalAmount, nCreditCardID)
+				VALUES (@Tax, @TotalAmount, @CreditCardID)
+			SET @InvoiceID = SCOPE_IDENTITY() -- Last identity value generated in this scope (InvoiceID)
+			
+			DECLARE @CurrentStock TABLE(ProductID INT, Stock INT, Quantity INT, CalculatedStock AS (Stock - Quantity))
+			INSERT INTO @CurrentStock
+				SELECT nProductID, nStock, Quantity FROM OPENJSON(@JSON_PRODUCTS)
+				WITH (
+					ProductID INT '$.nProductID',
+					Quantity INT '$.quantity',
+					UnitPrice MONEY '$.unitPrice'
+				)
+				INNER JOIN TProduct
+					ON nProductID = ProductID
+
+			DECLARE @InsufficientStock INT
+			SET @InsufficientStock = (
+				SELECT COUNT(*) FROM @CurrentStock WHERE
+					CalculatedStock < 0
+				)
+
+			IF (@InsufficientStock > 0)
+				BEGIN
+					RAISERROR('Item not in stock', 16, 1);
+				END
+			ELSE
+				BEGIN
+					INSERT INTO TInvoiceLine([nInvoiceID],[nProductID],[nQuantity],[nUnitPrice]) 
+						SELECT @InvoiceId, ProductID, Quantity, UnitPrice FROM OPENJSON(@JSON_PRODUCTS)
+						WITH (
+							ProductID INT '$.nProductID',
+							Quantity INT '$.quantity',
+							UnitPrice MONEY '$.unitPrice'
+						)
+
+					UPDATE TProduct
+						SET TProduct.nStock = cs.CalculatedStock FROM TProduct p
+							INNER JOIN @CurrentStock cs
+								ON p.nProductID = cs.ProductID
+
+					UPDATE TCreditCard
+						SET nTotalAmountSpent = (nTotalAmountSpent + @TotalAmount)
+						WHERE nCreditCardID = @CreditCardID
+
+					UPDATE TUser
+						SET nTotalSpent = (nTotalSpent + @TotalAmount)
+						WHERE nUserID = @UserID
+											
+					COMMIT
+				END
+	END TRY
+	BEGIN CATCH
+		ROLLBACK
+	END CATCH
+END
+GO
 -- Stored procedure for searching products
     -- Checks against both name and description
     -- Note that the description is converted to VARCHAR, because TEXT doesn't work with string concatenation
