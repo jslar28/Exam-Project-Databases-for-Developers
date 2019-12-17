@@ -1,27 +1,26 @@
 -- Insert products
 USE WebShopDB
-INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Apple','Danish apple',2.50,9,0);
-INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Orange','1. class from Spain',2.00,23,0);
-INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Kiwi','From China',1.50,22,0);
+INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Apple','Danish apple',2.50,9,2.2);
+INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Orange','1. class from Spain',2.00,23,3.7);
+INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Kiwi','From China',1.50,22,2.6);
 INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Green Grape','1 kg. From Italy',10.00,22,0);
-INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Red Grape','1 kg. From Italy',10.00,18,0);
-INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Banana','1. class from Turkey',2.10,7,0);
-INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Carrot','2 kg. Danish',20.00,11,0);
-INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Lemon','Yellow and Juicy',2.35,13,0);
+INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Red Grape','1 kg. From Italy',10.00,18,2.5);
+INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Banana','1. class from Turkey',2.10,7,3.3);
+INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Carrot','2 kg. Danish',20.00,11,4.7);
+INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Lemon','Yellow and Juicy',2.35,13,4.0);
 INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Cucumber','Danish',5.50,19,0);
-INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Iceberg','Danish',9.50,22,0);
-INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Parsley','Danish',8.00,14,0);
-INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Radishes','Danish',4.50,16,0);
+INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Iceberg','Danish',9.50,22,3.2);
+INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Parsley','Danish',8.00,14,2.8);
+INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Radishes','Danish',4.50,16,2.0);
 INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Avocado','From Turkey',8.00,14,0);
-INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Onion','2 kg. Danish',18.00,2,0);
-INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Garlic','Danish',13.50,4,0);
-INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Aubergine','Turkish',6.00,3,0);
-INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Pineapples','1. class',18.00,23,0);
+INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Onion','2 kg. Danish',18.00,2,3.2);
+INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Garlic','Danish',13.50,4,1.8);
+INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Aubergine','Turkish',6.00,3,3.0);
+INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Pineapples','1. class',18.00,23,2.8);
 INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Papaya','From Mexico',21.00,6,0);
 INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Pomegranate','From Spain',9.00,4,0);
-INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Lime','From Turkey',3.00,14,0);
+INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Lime','From Turkey',3.00,14,3.5);
 GO
-
 -- Insert cities
 USE WebShopDB
 INSERT INTO TCity([cCityName]) VALUES('København NV');
@@ -119,6 +118,74 @@ INSERT INTO TCreditCard([cCardNumber],[nCardHolderID],[cExpiryDate],[cCCV],[nUse
 INSERT INTO TCreditCard([cCardNumber],[nCardHolderID],[cExpiryDate],[cCCV],[nUserID]) VALUES(4466778899001122,15,'09/22',690,15);
 INSERT INTO TCreditCard([cCardNumber],[nCardHolderID],[cExpiryDate],[cCCV],[nUserID]) VALUES(4477889900112233,15,'10/22',700,15);
 INSERT INTO TCreditCard([cCardNumber],[nCardHolderID],[cExpiryDate],[cCCV],[nUserID]) VALUES(4488990011223344,15,'11/22',710,15);
+
+USE WebShopDB
+-- UserID 14 -- UserID 13 -- UserID 11 -- UserID 10 -- UserID 9 -- UserID 7 -- UserID 5 -- UserID 3 -- UserID 2 -- UserID 1
+
+-- productID 20 -- productID 17 -- productID 16 -- productID 15 -- productID 14 -- productID 12 -- productID 11 -- productID 10 
+-- productID 8 -- productID 7 -- productID 6 -- productID 5 -- productID 3 -- productID 2 -- productID 1
+-- With comments
+INSERT INTO TRating (nUserID, nProductID, nScore, cComment) VALUES (1,20,4, 'So good'); --1
+INSERT INTO TRating (nUserID, nProductID, nScore, cComment) VALUES (2,3,5, 'So nice'); --2
+INSERT INTO TRating (nUserID, nProductID, nScore, cComment) VALUES (3,17,5, 'The best'); --3
+INSERT INTO TRating (nUserID, nProductID, nScore, cComment) VALUES (2,1,1, 'Not very nice, not fresh'); --4
+INSERT INTO TRating (nUserID, nProductID, nScore, cComment) VALUES (3,14,3, 'Decent'); --5
+INSERT INTO TRating (nUserID, nProductID, nScore, cComment) VALUES (9,2,2, 'Not satisfying'); --6
+INSERT INTO TRating (nUserID, nProductID, nScore, cComment) VALUES (10,10,4, 'Above average'); --7
+INSERT INTO TRating (nUserID, nProductID, nScore, cComment) VALUES (7,12,1, 'Bad'); --8
+INSERT INTO TRating (nUserID, nProductID, nScore, cComment) VALUES (13,8,2, 'Would not buy again'); --9
+INSERT INTO TRating (nUserID, nProductID, nScore, cComment) VALUES (9,7,5, 'Best i ever had'); --10
+INSERT INTO TRating (nUserID, nProductID, nScore, cComment) VALUES (11,11,3, 'Average'); --11
+INSERT INTO TRating (nUserID, nProductID, nScore, cComment) VALUES (1,3,1, 'Eeeeeeww'); --12
+INSERT INTO TRating (nUserID, nProductID, nScore, cComment) VALUES (13,15,2, 'So good it is very nice'); --13
+INSERT INTO TRating (nUserID, nProductID, nScore, cComment) VALUES (9,16,4, 'Good and juicy'); --14
+INSERT INTO TRating (nUserID, nProductID, nScore, cComment) VALUES (5,14,4, 'Very fresh can recommend'); --15
+INSERT INTO TRating (nUserID, nProductID, nScore, cComment) VALUES (7,11,2, 'Dont buy this'); --16
+INSERT INTO TRating (nUserID, nProductID, nScore, cComment) VALUES (11,10,1, 'Disgusting'); --17
+INSERT INTO TRating (nUserID, nProductID, nScore, cComment) VALUES (13,5,4, 'I will tell my friends about this'); --18
+INSERT INTO TRating (nUserID, nProductID, nScore, cComment) VALUES (14,8,5, '10/10'); --19
+INSERT INTO TRating (nUserID, nProductID, nScore, cComment) VALUES (5,20,5, 'Best i have had in 2019'); --20
+-- Without comments
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (2,20,1); --21
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (14,15,2); --22
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (11,17,3); --23
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (13,16,4); --24
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (10,14,5); --25
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (5,17,2); --26
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (3,1,1); --27
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (1,1,1); --28
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (7,3,3); --29
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (5,3,3); --30
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (3,5,1); --31
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (2,6,4); --32
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (11,7,5); --33
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (11,8,5); --34
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (14,20,4); --35
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (11,15,2); --36
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (10,12,3); --37
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (10,11,2); --38
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (1,10,5); --39
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (13,3,1); --40
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (9,6,4); --41
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (5,7,4); --42
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (7,8,5); --43
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (2,15,1); --44
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (10,17,1); --45
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (13,14,3); --46
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (14,1,3); --47
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (10,2,4); --48
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (14,14,2); --49
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (5,12,2); --50
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (2,11,3); --51
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (3,11,4); --52
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (13,10,1); --53
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (14,10,5); --54
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (5,16,1); --55
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (13,6,2); --56
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (11,14,2); --57
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (9,8,3); --58
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (3,2,5); --59
+INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (7,1,5); --60
 
 -- TODO: Insert Invoice
 -- TODO: Insert InvoiceLines
