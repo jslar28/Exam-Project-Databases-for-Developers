@@ -64,6 +64,9 @@ Enable, and configure 'sa' user
 
 For good measure, we recommend restarting the system when all above steps have been taken.
 
+## Setup data in the database
+Run the "CompleteScripts.sql" from the ./db_scripts folder, to generate everything for the database.
+
 ## Setup Backend (NodeJS)
 Setup config file:
     All of this can be done in File Explorer, or an IDEA (we recommend VS Code)
