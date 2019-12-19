@@ -1,10 +1,8 @@
 -- First creates the database and then creates all the tables
-CREATE DATABASE WebShopDB
+CREATE DATABASE FinalWebShop
 GO
 
--- Make sure we are using the correct database
-USE WebShopDB
-
+USE FinalWebShop
 -- Creates tables
 CREATE TABLE TCity (
 	nCityID SMALLINT NOT NULL IDENTITY (1,1),
@@ -19,7 +17,7 @@ CREATE TABLE TIBAN (
 );
 
 CREATE TABLE TCardHolder(
-	nCardHolderID INT NOT NULL UNIQUE IDENTITY(1,1),
+	nCardHolderID INT NOT NULL IDENTITY(1,1),
 	cName VARCHAR(50) NOT NULL,
 	CONSTRAINT PK_TCardHolder PRIMARY KEY (nCardHolderID)
 );
@@ -35,7 +33,8 @@ CREATE TABLE TUser (
 	cEmail VARCHAR(255) NOT NULL UNIQUE CHECK(cEmail LIKE '%@%.%'),
 	nTotalSpent MONEY NOT NULL DEFAULT 0,
 	CONSTRAINT PK_TUser PRIMARY KEY (nUserID),
-	CONSTRAINT FK_TUser_TCity FOREIGN KEY (nCityID) REFERENCES TCity (nCityID) ON UPDATE CASCADE
+	CONSTRAINT FK_TUser_TCity FOREIGN KEY (nCityID) REFERENCES TCity (nCityID) ON UPDATE CASCADE,
+	INDEX IDX_TUser_TCity (nCityID)
 );
 
 CREATE TABLE TCreditCard (
@@ -50,7 +49,10 @@ CREATE TABLE TCreditCard (
 	CONSTRAINT PK_TCreditCard PRIMARY KEY (nCreditCardID),
 	CONSTRAINT FK_TCreditCard_TIBAN FOREIGN KEY (nIBANID) REFERENCES TIBAN (nIBANID) ON UPDATE CASCADE,
 	CONSTRAINT FK_TCreditCard_TCardHolder FOREIGN KEY (nCardHolderID) REFERENCES TCardHolder (nCardHolderID) ON UPDATE CASCADE,
-	CONSTRAINT FK_TCreditCard_TUser FOREIGN KEY (nUserID) REFERENCES TUser (nUserID) ON UPDATE CASCADE ON DELETE CASCADE
+	CONSTRAINT FK_TCreditCard_TUser FOREIGN KEY (nUserID) REFERENCES TUser (nUserID) ON UPDATE CASCADE ON DELETE CASCADE,
+	INDEX IDX_TCreditCard_TIBAN (nIBANID),
+	INDEX IDX_TCreditCard_TCardHolder (nCardHolderID),
+	INDEX IDX_TCreditCard_TUser (nUserID)
 );
 
 CREATE TABLE TProduct (
@@ -63,7 +65,8 @@ CREATE TABLE TProduct (
 	dValidFrom DATETIME2 (2) GENERATED ALWAYS AS ROW START,
 	dValidTo DATETIME2 (2) GENERATED ALWAYS AS ROW END,
 	PERIOD FOR SYSTEM_TIME (dValidFrom, dValidTo),
-	CONSTRAINT PK_TProduct PRIMARY KEY (nProductID)
+	CONSTRAINT PK_TProduct PRIMARY KEY (nProductID),
+	INDEX IDX_cName (cName)
 ) WITH (SYSTEM_VERSIONING = ON (HISTORY_TABLE = dbo.TProductHistory));
 
 CREATE TABLE TInvoice (
@@ -73,7 +76,8 @@ CREATE TABLE TInvoice (
 	nTotalAmount MONEY NOT NULL,
 	nCreditCardID INT NOT NULL,
 	CONSTRAINT PK_TInvoice PRIMARY KEY (nInvoiceID),
-	CONSTRAINT FK_TInvoice_TCreditCard FOREIGN KEY (nCreditCardID) REFERENCES TCreditCard (nCreditCardID) ON UPDATE CASCADE
+	CONSTRAINT FK_TInvoice_TCreditCard FOREIGN KEY (nCreditCardID) REFERENCES TCreditCard (nCreditCardID) ON UPDATE CASCADE,
+	INDEX IDX_TInvoice_TCreditCard (nCreditCardID)
 );
 
 CREATE TABLE TInvoiceLine(
@@ -155,12 +159,10 @@ CREATE TABLE TCreditCardAudit (
 	cHost VARCHAR(50) NOT NULL DEFAULT HOST_NAME(), -- hostname/name of computer
 	CONSTRAINT PK_TCreditCardAudit PRIMARY KEY (nCreditCardAuditID)
 );
-GO
--- Make sure we are using the correct database
 
 
 -- Make sure to use the correct database
-USE WebShopDB
+USE FinalWebShop
 
 -- Creates the login AdminUser with password 'Password123'.  
 CREATE LOGIN AdminUser	  
@@ -171,7 +173,7 @@ CREATE USER AdminUser FOR LOGIN AdminUser;
 
 -- Grant user AdminUser the role of db_owner
 ALTER ROLE db_owner ADD MEMBER AdminUser;
-ALTER LOGIN AdminUser WITH DEFAULT_DATABASE = WebShopDB
+ALTER LOGIN AdminUser WITH DEFAULT_DATABASE = FinalWebShop
 
 -- Creates the login Mehmet with password 'Qwerty123'.
 CREATE LOGIN Mehmet
@@ -182,7 +184,7 @@ CREATE USER Mehmet FOR LOGIN Mehmet;
 
 -- Grant user Mehmet the role of db_datareader
 ALTER ROLE db_datareader ADD MEMBER Mehmet;
-ALTER LOGIN Mehmet WITH DEFAULT_DATABASE = WebShopDB
+ALTER LOGIN Mehmet WITH DEFAULT_DATABASE = FinalWebShop
 
 -- Creates the login Jakob with password 'Wasd123'.
 CREATE LOGIN Jakob
@@ -193,7 +195,7 @@ CREATE USER Jakob FOR LOGIN Jakob;
 
 -- Grant user Jakob the role of db_datareader
 ALTER ROLE db_datareader ADD MEMBER Jakob;
-ALTER LOGIN Jakob WITH DEFAULT_DATABASE = WebShopDB
+ALTER LOGIN Jakob WITH DEFAULT_DATABASE = FinalWebShop
 DENY SELECT ON OBJECT::dbo.TInvoice TO Jakob;
 DENY SELECT ON OBJECT::dbo.TInvoiceLine TO Jakob;
 
@@ -206,7 +208,7 @@ GO
 
 
 -- Makes sure we are using the correct database
-USE WebShopDB
+USE FinalWebShop
 GO
 
 -- Audit table triggers for TUser
@@ -390,7 +392,7 @@ GO
 
 
 -- Makes sure we are using the correct database
-USE WebShopDB
+USE FinalWebShop
 GO
 
 -- Stored procedure for rating products
@@ -439,7 +441,7 @@ END
 GO
 -- Example run: EXEC RateProduct 9, 9, 3, 'Decent'
 
-USE WebShopDB
+USE FinalWebShop
 GO
 CREATE OR ALTER PROCEDURE BuyProduct 
 	(@Tax NUMERIC(4,2), @TotalAmount MONEY, @CreditCardID INT, @UserID INT, @JSON_PRODUCTS NVARCHAR(MAX))
@@ -520,7 +522,7 @@ END
 GO
 
 -- Insert products
-USE WebShopDB
+USE FinalWebShop
 INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Apple','Danish apple',2.50,9,2.2);
 INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Orange','1. class from Spain',2.00,23,3.7);
 INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Kiwi','From China',1.50,22,2.6);
@@ -543,7 +545,7 @@ INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRatin
 INSERT INTO TProduct([cName],[cDescription],[nUnitPrice],[nStock],[nAverageRating]) VALUES('Lime','From Turkey',3.00,14,3.5);
 GO
 -- Insert cities
-USE WebShopDB
+USE FinalWebShop
 INSERT INTO TCity([cCityName]) VALUES('København NV');
 INSERT INTO TCity([cCityName]) VALUES('Frederiksberg');
 INSERT INTO TCity([cCityName]) VALUES('Vanløse');
@@ -557,7 +559,7 @@ INSERT INTO TCity([cCityName]) VALUES('Slagelse');
 -- Kbh NV: 2400, Frederiksberg: 2000, Vanløse: 2720, Næstved: 4700, Silkeborg: 8600, Køge: 4600, Hvidovre: 2650, Kongens Lyngby: 2800, Skanderborg: 8660, Slagelse: 4200
 
 -- Insert users
-USE WebShopDB
+USE FinalWebShop
 INSERT INTO TUser(cFirstName,cSurname,cAddress,cZipCode,nCityID,cPhoneNumber,cEmail,nTotalSpent) VALUES ('John','Doe','Rentemestervej 1','2400',1,'88331212','a@a.dk',157.50);
 INSERT INTO TUser(cFirstName,cSurname,cAddress,cZipCode,nCityID,cPhoneNumber,cEmail,nTotalSpent) VALUES ('Jakob','Jensen','Hvidovrevej 280','2650',7,'76567777','jako@jens.dk',107.00);
 INSERT INTO TUser(cFirstName,cSurname,cAddress,cZipCode,nCityID,cPhoneNumber,cEmail,nTotalSpent) VALUES ('Mehmet','Deniz','Egevolden 188','2650',7,'76567777','me@me.dk',79.00);
@@ -576,7 +578,7 @@ INSERT INTO TUser(cFirstName,cSurname,cAddress,cZipCode,nCityID,cPhoneNumber,cEm
 
 
 -- Insert card holders
-USE WebShopDB
+USE FinalWebShop
 INSERT INTO TCardHolder([cName]) VALUES ('John Doe');
 INSERT INTO TCardHolder([cName]) VALUES ('Jakob Jensen');
 INSERT INTO TCardHolder([cName]) VALUES ('Mehmet Deniz');
@@ -595,7 +597,7 @@ INSERT INTO TCardHolder([cName]) VALUES ('Ole Skam');
 GO
 
 -- Insert IBANs
-USE WebShopDB
+USE FinalWebShop
 INSERT INTO TIBAN([cIBAN]) VALUES('DK73827931798');
 INSERT INTO TIBAN([cIBAN]) VALUES('DK73827498798');
 INSERT INTO TIBAN([cIBAN]) VALUES('DK73890233232');
@@ -606,7 +608,7 @@ INSERT INTO TIBAN([cIBAN]) VALUES('DK73224332323');
 INSERT INTO TIBAN([cIBAN]) VALUES('DK73998833333');
 
 -- Insert credit cards
-USE WebShopDB
+USE FinalWebShop
 INSERT INTO TCreditCard(cCardNumber,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('1122334455667788',1,'04/20','444',157.50,1);
 INSERT INTO TCreditCard(cCardNumber,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('1133445566778899',1,'05/20','555',0.00,1);
 INSERT INTO TCreditCard(cCardNumber,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('1144556677889900',1,'06/20','666',0.00,1);
@@ -620,28 +622,28 @@ INSERT INTO TCreditCard(cCardNumber,nCardHolderID,cExpiryDate,cCCV,nTotalAmountS
 INSERT INTO TCreditCard(cCardNumber,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('2244556677889900',6,'02/21','467',0.00,6);
 INSERT INTO TCreditCard(cCardNumber,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('2255667788990011',7,'03/21','478',33.50,7);
 INSERT INTO TCreditCard(cCardNumber,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('2266778899001122',8,'04/21','489',39.00,8);
-INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('2277889900112233',NULL,9,'05/21','512',174.50,9);
-INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('2288990011223344',NULL,9,'06/21','522',0.00,9);
-INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('2299001122334455',NULL,9,'07/21','533',0.00,9);
-INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('3311223344556677',NULL,10,'08/21','544',74.50,10);
-INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('3322334455667788',NULL,11,'09/21','556',55.70,11);
-INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('3333445566778899',NULL,11,'10/21','567',0.00,11);
-INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('3344556677889900',NULL,11,'11/21','578',0.00,11);
-INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('3355667788990011',NULL,12,'12/21','580',95.50,12);
-INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('3366778899001122',NULL,12,'01/22','590',18.00,12);
-INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('3377889900112233',NULL,12,'02/22','610',0.00,12);
-INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('3388990011223344',NULL,13,'03/22','620',0.00,13);
-INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('3399001122334455',NULL,13,'04/22','630',0.00,13);
-INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('4411223344556677',NULL,13,'04/22','640',0.00,13);
-INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('4422334455667788',NULL,14,'05/22','650',0.00,14);
-INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('4433445566778899',NULL,14,'06/22','660',0.00,14);
-INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('4444556677889900',NULL,14,'07/22','670',0.00,14);
-INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('4455667788990011',NULL,15,'08/22','680',0.00,15);
-INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('4466778899001122',NULL,15,'09/22','690',0.00,15);
-INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('4477889900112233',NULL,15,'10/22','700',0.00,15);
-INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('4488990011223344',NULL,15,'11/22','710',0.00,15);
+INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('2277889900112233',1,9,'05/21','512',174.50,9);
+INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('2288990011223344',1,9,'06/21','522',0.00,9);
+INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('2299001122334455',1,9,'07/21','533',0.00,9);
+INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('3311223344556677',2,10,'08/21','544',74.50,10);
+INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('3322334455667788',3,11,'09/21','556',55.70,11);
+INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('3333445566778899',3,11,'10/21','567',0.00,11);
+INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('3344556677889900',3,11,'11/21','578',0.00,11);
+INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('3355667788990011',4,12,'12/21','580',95.50,12);
+INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('3366778899001122',4,12,'01/22','590',18.00,12);
+INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('3377889900112233',4,12,'02/22','610',0.00,12);
+INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('3388990011223344',5,13,'03/22','620',0.00,13);
+INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('3399001122334455',5,13,'04/22','630',0.00,13);
+INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('4411223344556677',5,13,'04/22','640',0.00,13);
+INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('4422334455667788',6,14,'05/22','650',0.00,14);
+INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('4433445566778899',6,14,'06/22','660',0.00,14);
+INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('4444556677889900',6,14,'07/22','670',0.00,14);
+INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('4455667788990011',7,15,'08/22','680',0.00,15);
+INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('4466778899001122',7,15,'09/22','690',0.00,15);
+INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('4477889900112233',7,15,'10/22','700',0.00,15);
+INSERT INTO TCreditCard(cCardNumber,nIBANID,nCardHolderID,cExpiryDate,cCCV,nTotalAmountSpent,nUserID) VALUES ('4488990011223344',7,15,'11/22','710',0.00,15);
 
-USE WebShopDB
+USE FinalWebShop
 -- UserID 14 -- UserID 13 -- UserID 11 -- UserID 10 -- UserID 9 -- UserID 7 -- UserID 5 -- UserID 3 -- UserID 2 -- UserID 1
 
 -- productID 20 -- productID 17 -- productID 16 -- productID 15 -- productID 14 -- productID 12 -- productID 11 -- productID 10 
@@ -709,7 +711,7 @@ INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (9,8,3); --58
 INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (3,2,5); --59
 INSERT INTO TRating (nUserID, nProductID, nScore) VALUES (7,1,5); --60
 
-USE WebShopDB
+USE FinalWebShop
 INSERT INTO TInvoice(dDate,nTax,nTotalAmount,nCreditCardID) VALUES ('2019-12-14 21:25:55.853',25.00,45.00,1);
 INSERT INTO TInvoice(dDate,nTax,nTotalAmount,nCreditCardID) VALUES ('2019-12-14 21:27:20.437',25.00,69.50,1);
 INSERT INTO TInvoice(dDate,nTax,nTotalAmount,nCreditCardID) VALUES ('2019-12-14 21:27:46.183',25.00,43.00,1);
@@ -757,7 +759,7 @@ INSERT INTO TInvoice(dDate,nTax,nTotalAmount,nCreditCardID) VALUES ('2019-12-14 
 INSERT INTO TInvoice(dDate,nTax,nTotalAmount,nCreditCardID) VALUES ('2019-12-14 21:52:08.430',25.00,27.50,21);
 INSERT INTO TInvoice(dDate,nTax,nTotalAmount,nCreditCardID) VALUES ('2019-12-14 21:52:51.577',25.00,18.00,22);
 
-USE WebShopDB
+USE FinalWebShop
 INSERT INTO TInvoiceLine(nInvoiceID,nProductID,nQuantity,nUnitPrice) VALUES (1,2,2,2.00);
 INSERT INTO TInvoiceLine(nInvoiceID,nProductID,nQuantity,nUnitPrice) VALUES (1,3,2,1.50);
 INSERT INTO TInvoiceLine(nInvoiceID,nProductID,nQuantity,nUnitPrice) VALUES (1,4,1,10.00);
